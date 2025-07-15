@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Tenant Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="../pwa-app/favicon.ico" type="image/x-icon">
+    <style>
+        .login-container {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header h1 {
+            color: #333;
+            font-size: 1.8rem;
+        }
+        .login-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .login-form .form-label {
+            font-weight: 500;
+            color: #555;
+        }
+        .login-form .form-control {
+            padding: 0.75rem;
+            border-radius: 4px;
+        }
+        .login-form .btn-primary {
+            padding: 0.75rem;
+            font-weight: 500;
+        }
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Tenant Portal Login</h1>
+                <p class="text-muted">Enter your flat link ID to access the portal</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group mb-3">
+                    <label for="flatLinkId" class="form-label">Flat Link ID</label>
+                    <input type="text" id="flatLinkId" class="form-control" placeholder="Enter your flat link ID" required>
+                    <div class="form-text">Your flat link ID was provided by your building manager.</div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Access Portal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const flatLinkId = document.getElementById('flatLinkId').value.trim();
+                if (flatLinkId) {
+                    // Store the flat link ID in localStorage
+                    localStorage.setItem('flatLinkId', flatLinkId);
+                    
+                    // Redirect to the flat maintenance page
+                    window.location.href = `flat-maintenance.html?flat_id=${flatLinkId}`;
+                } else {
+                    showError('Please enter a valid flat link ID');
+                }
+            });
+        });
+        
+        // Show error message
+        function showError(message) {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastHtml = `
+                <div class="toast" role="alert">
+                    <div class="toast-body text-danger">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toast = new bootstrap.Toast(toastContainer.lastElementChild);
+            toast.show();
+        }
+    </script>
+</body>
+</html> 

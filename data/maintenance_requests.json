@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "title": "Leaking Faucet",
+    "description": "The bathroom faucet is leaking constantly.",
+    "priority": "medium",
+    "status": "in progress",
+    "flat_id": "101A",
+    "tenant_id": 1,
+    "created_at": "2023-04-20T00:00:00+00:00",
+    "updated_at": "2023-04-25T00:00:00+00:00"
+  },
+  {
+    "id": 2,
+    "title": "Bulb Replacement",
+    "description": "The kitchen light bulb needs replacement.",
+    "priority": "low",
+    "status": "completed",
+    "flat_id": "101A",
+    "tenant_id": 1,
+    "created_at": "2023-04-10T00:00:00+00:00",
+    "updated_at": "2023-04-12T00:00:00+00:00"
+  },
+  {
+    "id": 3,
+    "title": "AC Not Working",
+    "description": "The air conditioner in the living room is not cooling properly.",
+    "priority": "high",
+    "status": "pending",
+    "flat_id": "101A",
+    "tenant_id": 1,
+    "created_at": "2023-05-01T00:00:00+00:00",
+    "updated_at": null
+  }
+] 

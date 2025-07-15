@@ -1,0 +1,8 @@
+{
+    "rent_due": "Dear {tenant_name}, your rent of Rs. {amount} for {flat_no} is due today. Your payment trend is {payment_trend}. Total dues: Rs. {total_dues}. Please ensure timely payment.",
+    "rent_reminder": "Reminder: Your rent of Rs. {amount} for {flat_no} is due in {days_until_due} days. Last payment was on {last_payment_date}. Current payment status: {payment_status}.",
+    "rent_overdue": "OVERDUE NOTICE: Your rent of Rs. {amount} for {flat_no} is overdue by {days_until_due} days. Total pending amount: Rs. {total_dues}. Please clear dues immediately.",
+    "bill_due_soon": "Dear {tenant_name}, your utility bill of Rs. {electricity_amount} for {flat_no} is due soon. Total bill dues: Rs. {total_bill_dues}. Last bill status: {last_bill_status}.",
+    "bill_overdue": "OVERDUE NOTICE: Your utility bill payment of Rs. {electricity_amount} for {flat_no} is pending. Total bill dues: Rs. {total_bill_dues}. Please clear immediately.",
+    "maintenance_update": "Update on your maintenance request: {status}. Notes: {notes}"
+} 

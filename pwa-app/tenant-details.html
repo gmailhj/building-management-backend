@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Details - Building Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            /* Light theme variables */
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --light-bg: #f8f9fa;
+            --dark-text: #2b2d42;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            --gradient-1: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+            --gradient-2: linear-gradient(135deg, #97ABFF 10%, #123597 100%);
+            --gradient-3: linear-gradient(135deg, #43CBFF 10%, #9708CC 100%);
+            --gradient-4: linear-gradient(135deg, #F761A1 10%, #8C1BAB 100%);
+            
+            /* Theme specific variables */
+            --body-bg: #f6f9fc;
+            --card-bg: #ffffff;
+            --text-color: var(--dark-text);
+            --border-color: #dee2e6;
+            --input-bg: #ffffff;
+            --input-border: #edf2f7;
+            --sidebar-bg: #ffffff;
+            --sidebar-hover: #f8f9fa;
+            --modal-bg: #ffffff;
+            --modal-border: rgba(0, 0, 0, 0.2);
+            --dropdown-bg: #ffffff;
+            --dropdown-hover: #f8f9fa;
+            --dropdown-border: rgba(0, 0, 0, 0.15);
+            --table-header-bg: var(--light-bg);
+            --table-border: rgba(0, 0, 0, 0.125);
+            --notification-bg: #ffffff;
+        }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --body-bg: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --input-bg: #1e1e1e;
+            --input-border: #333333;
+            --table-header-bg: #1e1e1e;
+            --table-border: #333333;
+            --notification-bg: #1e1e1e;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --hover-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            --sidebar-bg: #1e1e1e;
+            --sidebar-hover: #2d2d2d;
+            --modal-bg: #121212;
+            --modal-border: rgba(255, 255, 255, 0.05);
+            --dropdown-bg: #1e1e1e;
+            --dropdown-hover: #2d2d2d;
+            --dropdown-border: rgba(255, 255, 255, 0.05);
+            --link-color: #64b5f6;
+            --link-hover-color: #90caf9;
+            --success-color: #81c784;
+            --warning-color: #ffb74d;
+            --error-color: #e57373;
+            --disabled-color: #616161;
+            --focus-ring: 0 0 0 2px rgba(100, 181, 246, 0.4);
+        }
+
+        body {
+            background: var(--body-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar {
+            background: var(--gradient-1);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.6rem;
+            background: linear-gradient(to right, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--card-bg);
+            margin-bottom: 1.5rem;
+            animation: scaleIn 0.5s ease-out;
+            overflow: hidden;
+            border-color: var(--border-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.005);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .tenant-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 4px solid white;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .tenant-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .nav-pills .nav-link {
+            color: var(--text-color);
+            padding: 1rem 1.5rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-pills .nav-link i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: var(--card-shadow);
+        }
+
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            color: var(--text-color);
+        }
+
+        .table thead th {
+            background: var(--table-header-bg);
+            color: var(--text-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1.2rem 1rem;
+            border: none;
+            border-color: var(--table-border);
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: var(--table-border);
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn:hover::after {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .badge {
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .notification-item {
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            background: var(--notification-bg);
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--primary-color);
+            animation: fadeInUp 0.5s ease-out;
+            border-color: var(--border-color);
+        }
+
+        .notification-item:hover {
+            transform: translateX(10px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .modal-header {
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 2rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px solid var(--input-border);
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .form-control:focus {
+            box-shadow: var(--focus-ring);
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .toast-container {
+            z-index: 9999;
+        }
+
+        .toast {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        .toast-header {
+            border-radius: 15px 15px 0 0;
+            padding: 1rem;
+        }
+
+        .toast-body {
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .card {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--secondary-color), var(--primary-color));
+        }
+
+        /* Stats cards */
+        .stats-card {
+            background: var(--gradient-2);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            z-index: 1;
+        }
+
+        .stats-card:nth-child(2) { background: var(--gradient-3); }
+        .stats-card:nth-child(3) { background: var(--gradient-4); }
+        .stats-card:nth-child(4) { background: var(--gradient-1); }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .stats-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .stats-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Profile section enhancements */
+        .profile-header {
+            background: var(--gradient-1);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 25px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+            transform: rotate(30deg);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Enhanced Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Glass Morphism Effects */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Enhanced Body Styling */
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark-text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        /* Enhanced Cards */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            background: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-2px);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .tenant-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 4px solid white;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .tenant-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .nav-pills .nav-link {
+            color: var(--dark-text);
+            padding: 1rem 1.5rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-pills .nav-link i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: var(--card-shadow);
+        }
+
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background-color: var(--light-bg);
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            background-color: var(--light-bg);
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            transform: translateX(5px);
+            background-color: white;
+            box-shadow: var(--card-shadow);
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: var(--hover-shadow);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
+            border-color: var(--primary-color);
+        }
+
+        .toast-container {
+            z-index: 9999;
+        }
+
+        .toast {
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Responsive Enhancements */
+        @media (max-width: 768px) {
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+
+            .profile-header {
+                padding: 2rem 1rem;
+            }
+
+            .table-responsive {
+                border-radius: 15px;
+                box-shadow: none;
+            }
+        }
+
+        /* Loading Animations */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Theme toggle button styles */
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Dark mode specific overrides */
+        [data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        [data-theme="dark"] .nav-pills .nav-link {
+            color: var(--text-color);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        [data-theme="dark"] .nav-pills .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--link-hover-color);
+        }
+
+        [data-theme="dark"] .form-select {
+            background-color: var(--input-bg);
+            border-color: var(--input-border);
+            color: var(--text-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        [data-theme="dark"] .form-select:focus {
+            box-shadow: var(--focus-ring);
+            border-color: var(--link-color);
+        }
+
+        [data-theme="dark"] .btn-secondary {
+            background-color: var(--disabled-color);
+            border-color: var(--disabled-color);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-secondary:hover {
+            background-color: #757575;
+            border-color: #757575;
+            transform: translateY(-1px);
+        }
+
+        [data-theme="dark"] .modal-content {
+            background-color: var(--modal-bg);
+            border-color: var(--modal-border);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        [data-theme="dark"] .dropdown-menu {
+            background-color: var(--dropdown-bg);
+            border-color: var(--dropdown-border);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="dark"] .dropdown-item {
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        [data-theme="dark"] .dropdown-item:hover {
+            background-color: var(--dropdown-hover);
+            color: var(--link-hover-color);
+        }
+
+        [data-theme="dark"] .modal-header,
+        [data-theme="dark"] .modal-footer {
+            border-color: var(--modal-border);
+        }
+
+        .notifications-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .table-responsive {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .table th, .table td {
+            white-space: nowrap;
+            padding: 0.5rem;
+        }
+        
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        }
+        
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.35em 0.65em;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Tenant Portal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button class="theme-toggle nav-link" id="themeToggle">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" id="profileDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Left Sidebar Navigation -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <img src="https://via.placeholder.com/150" alt="Tenant Photo" class="tenant-avatar" id="tenantPhoto">
+                            <h5 class="mb-0" id="tenantName">Loading...</h5>
+                            <p class="text-muted" id="tenantFlatNo">Flat: Loading...</p>
+                        </div>
+                        <div class="nav flex-column nav-pills" role="tablist">
+                            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profile" type="button">
+                                <i class="fas fa-user me-2"></i> Profile
+                            </button>
+                            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#bills" type="button">
+                                <i class="fas fa-file-invoice-dollar me-2"></i> Bills
+                            </button>
+                            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#notifications" type="button">
+                                <i class="fas fa-bell me-2"></i> Notifications
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Main Content Area -->
+            <div class="col-md-9">
+                <div class="tab-content">
+                    <!-- Profile Section -->
+                    <div class="tab-pane fade show active" id="profile">
+                        <div class="profile-header">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <img src="https://via.placeholder.com/150" alt="Tenant Photo" class="tenant-avatar" id="profilePhoto">
+                                </div>
+                                <div class="col">
+                                    <h3 class="mb-1" id="profileName">Loading...</h3>
+                                    <p class="mb-0" id="profileFlatNo">Flat: Loading...</p>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#editTenantModal">
+                                        <i class="fas fa-edit"></i> Edit Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="profile-stats">
+                                    <div class="stats-card">
+                                        <div class="stats-icon">
+                                            <i class="fas fa-home"></i>
+                                        </div>
+                                        <div class="stats-value" id="rentAmount">₹0</div>
+                                        <div class="stats-label">Monthly Rent</div>
+                                    </div>
+                                    <div class="stats-card">
+                                        <div class="stats-icon">
+                                            <i class="fas fa-calendar-check"></i>
+                                        </div>
+                                        <div class="stats-value" id="moveInDate">-</div>
+                                        <div class="stats-label">Move-in Date</div>
+                                    </div>
+                                    <div class="stats-card">
+                                        <div class="stats-icon">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </div>
+                                        <div class="stats-value" id="totalBills">0</div>
+                                        <div class="stats-label">Total Bills</div>
+                                    </div>
+                                    <div class="stats-card">
+                                        <div class="stats-icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="stats-value" id="dueDate">-</div>
+                                        <div class="stats-label">Next Due Date</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card">
+                    <div class="card-body">
+                                        <h5 class="card-title mb-4">Personal Information</h5>
+                                        <div class="mb-3">
+                                            <label class="text-muted">Full Name</label>
+                                            <p class="h6" id="infoName">Loading...</p>
+                        </div>
+                                        <div class="mb-3">
+                                            <label class="text-muted">Contact Number</label>
+                                            <p class="h6" id="infoContact">Loading...</p>
+                    </div>
+                                        <div class="mb-3">
+                                            <label class="text-muted">Email Address</label>
+                                            <p class="h6" id="infoEmail">Loading...</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="text-muted">Status</label>
+                                            <p class="h6"><span class="badge" id="infoStatus">Loading...</span></p>
+                                        </div>
+                                    </div>
+                </div>
+            </div>
+
+                            <div class="col-md-6">
+                                <div class="card">
+                    <div class="card-body">
+                                        <h5 class="card-title mb-4">Emergency Contact</h5>
+                                        <div class="mb-3">
+                                            <label class="text-muted">Contact Name</label>
+                                            <p class="h6" id="emergencyName">Not provided</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="text-muted">Relationship</label>
+                                            <p class="h6" id="emergencyRelation">Not provided</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="text-muted">Contact Number</label>
+                                            <p class="h6" id="emergencyContact">Not provided</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="text-muted">Email Address</label>
+                                            <p class="h6" id="emergencyEmail">Not provided</p>
+                                        </div>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editEmergencyContactModal">
+                                            <i class="fas fa-edit"></i> Edit Emergency Contact
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4">Payment History Overview</h5>
+                                        <div id="paymentSummary"></div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="text-muted">Payment Status</label>
+                                                    <p class="h6"><span class="badge" id="paymentStatus">Loading...</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="text-muted">Last Payment</label>
+                                                    <p class="h6" id="lastPayment">Loading...</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="text-muted">Payment Trend</label>
+                                                    <p class="h6"><span class="badge" id="paymentTrend">Loading...</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="text-muted">Total Due</label>
+                                                    <p class="h6" id="totalDue">Loading...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bills Section -->
+                    <div class="tab-pane fade" id="bills">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="card-title">Bill History</h5>
+                                    <div>
+                                        <button class="btn btn-success me-2" type="button" data-bs-toggle="modal" data-bs-target="#sendBillModal" id="sendBillBtn">
+                                            <i class="fas fa-paper-plane" aria-hidden="true"></i> Generate & Send Bill
+                                        </button>
+                                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addBillModal" id="addBillBtn">
+                                            <i class="fas fa-plus" aria-hidden="true"></i> Add New Bill
+                            </button>
+                        </div>
+                                </div>
+                                
+                                <!-- Enhanced Filter Section -->
+                                <div class="row mb-3">
+                                    <div class="col-md-2">
+                                        <label class="form-label text-muted small">Filter by Year</label>
+                                        <select class="form-select" id="filterYear">
+                                            <option value="">All Years</option>
+                                            <!-- Years will be populated dynamically -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label text-muted small">Filter by Month</label>
+                                        <select class="form-select" id="filterMonth">
+                                            <option value="">All Months</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label text-muted small">Filter by Status</label>
+                                        <select class="form-select" id="filterStatus">
+                                            <option value="">All Statuses</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="paid">Paid</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small">Actions</label>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-primary" id="applyFilters">
+                                                <i class="fas fa-filter"></i> Apply
+                                            </button>
+                                            <button class="btn btn-outline-secondary" id="clearFilters">
+                                                <i class="fas fa-times"></i> Clear
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label text-muted small">Export Reports</label>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-success" id="exportPDF">
+                                                <i class="fas fa-file-pdf"></i> PDF
+                                            </button>
+                                            <button class="btn btn-outline-info" id="exportCSV">
+                                                <i class="fas fa-file-csv"></i> CSV
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Month</th>
+                                                <th>Previous Reading</th>
+                                                <th>Current Reading</th>
+                                                <th>Units</th>
+                                                <th>Electricity Bill</th>
+                                                <th>Rent Amount</th>
+                                                <th>Maid Charges</th>
+                                                <th>Total Amount</th>
+                                                <th>Due Date</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="billHistory">
+                                            <!-- Bill history will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- Notifications Section -->
+                    <div class="tab-pane fade" id="notifications">
+                <div class="card">
+                    <div class="card-body">
+                                <h5 class="card-title mb-4">Notifications</h5>
+                                <div id="notificationsList" class="notifications-container">
+                            <!-- Notifications will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contact Edit Modal -->
+            <div class="modal fade" id="editEmergencyContactModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Emergency Contact</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="emergencyContactForm">
+                                <div class="mb-3">
+                                    <label for="emergencyContactName" class="form-label">Contact Name</label>
+                                    <input type="text" class="form-control" id="emergencyContactName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emergencyContactRelation" class="form-label">Relationship</label>
+                                    <input type="text" class="form-control" id="emergencyContactRelation" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emergencyContactNumber" class="form-label">Contact Number</label>
+                                    <input type="tel" class="form-control" id="emergencyContactNumber" pattern="[0-9]{10}" required>
+                                    <div class="form-text">Enter a 10-digit phone number</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emergencyContactEmail" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="emergencyContactEmail" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveEmergencyContact">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Tenant Modal -->
+    <div class="modal fade" id="editTenantModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Tenant Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editTenantForm">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contact Number</label>
+                            <input type="tel" class="form-control" id="editContact" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rent Amount</label>
+                            <input type="number" class="form-control" id="editRent" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rent Due Day</label>
+                            <input type="number" class="form-control" id="editDueDay" min="1" max="31" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reminder Days</label>
+                            <input type="number" class="form-control" id="editReminderDays" min="1" max="15" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reminder Method</label>
+                            <select class="form-control" id="editReminderMethod" required>
+                                <option value="notification">In-App Notification</option>
+                                <option value="sms">SMS</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-control" id="editStatus" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateTenant()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bill Modal -->
+    <div class="modal fade" id="addBillModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Bill</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addBillForm">
+                        <div class="mb-3">
+                            <label for="billMonth" class="form-label">Month</label>
+                            <select class="form-select" id="billMonth" required>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="billYear" class="form-label">Year</label>
+                            <input type="number" class="form-control" id="billYear" required min="2000" max="2100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="previousReading" class="form-label">Previous Reading</label>
+                            <input type="number" class="form-control" id="previousReading" required min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="currentReading" class="form-label">Current Reading</label>
+                            <input type="number" class="form-control" id="currentReading" required min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="unitsConsumed" class="form-label">Units Consumed</label>
+                            <input type="number" class="form-control" id="unitsConsumed" required min="0" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="electricityBill" class="form-label">Electricity Bill Amount</label>
+                            <input type="number" class="form-control" id="electricityBill" required min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="maidCharges" class="form-label">Maid Charges</label>
+                            <input type="number" class="form-control" id="maidCharges" required min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="dueDate" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="dueDate" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addBill()">Add Bill</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Bill Modal -->
+    <div class="modal fade" id="editBillModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Bill</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBillForm">
+                        <input type="hidden" id="editBillId">
+                        <div class="mb-3">
+                            <label for="editBillMonth" class="form-label">Month</label>
+                            <select class="form-select" id="editBillMonth" required>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBillYear" class="form-label">Year</label>
+                            <input type="number" class="form-control" id="editBillYear" required min="2000" max="2100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPreviousReading" class="form-label">Previous Reading</label>
+                            <input type="number" class="form-control" id="editPreviousReading" required min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCurrentReading" class="form-label">Current Reading</label>
+                            <input type="number" class="form-control" id="editCurrentReading" required min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMaidCharges" class="form-label">Maid Charges</label>
+                            <input type="number" class="form-control" id="editMaidCharges" required min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDueDate" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="editDueDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" required>
+                                <option value="pending">Pending</option>
+                                <option value="paid">Paid</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateBillRecord()">Update Bill</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this bill? This action cannot be undone.</p>
+                    <input type="hidden" id="deleteBillId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteBillRecord()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Bill Modal -->
+    <div class="modal fade" id="sendBillModal" tabindex="-1" aria-labelledby="sendBillModalLabel" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="sendBillModalLabel">Generate & Send Bill</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <bill-form id="billForm" tenant-id=""></bill-form>
+                    <div class="mt-3">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="sendAsUrgent">
+                            <label class="form-check-label" for="sendAsUrgent">
+                                Mark as Urgent
+                            </label>
+                        </div>
+                        <label for="sendBillMessage" class="form-label">Additional Message</label>
+                        <textarea class="form-control" id="sendBillMessage" rows="3" placeholder="Optional message to include with the bill notification"></textarea>
+                    </div>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sendBillYear" class="form-label">Year</label>
+                            <input type="number" class="form-control" id="sendBillYear" required min="2000" max="2100" value="2023">
+                        </div>
+                        <div class="mb-3">
+                            <label for="sendBillMessage" class="form-label">Additional Message</label>
+                            <textarea class="form-control" id="sendBillMessage" rows="3" placeholder="Optional message to include with the bill notification"></textarea>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="sendAsUrgent">
+                            <label class="form-check-label" for="sendAsUrgent">
+                                Mark as Urgent
+                            </label>
+                        </div>
+                        <input type="hidden" id="sendBillId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="generateAndSendBill()">Generate & Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pay Bill Modal -->
+    <div class="modal fade" id="payBillModal" tabindex="-1" aria-labelledby="payBillModalLabel" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="payBillModalLabel">Pay Bill</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="payBillForm">
+                        <div class="mb-3">
+                            <label class="form-label">Bill Details</label>
+                            <div class="card p-3 bg-light">
+                                <p class="mb-1"><strong>Month:</strong> <span id="payBillMonth"></span></p>
+                                <p class="mb-1"><strong>Total Amount:</strong> <span id="payBillAmount"></span></p>
+                                <p class="mb-0"><strong>Due Date:</strong> <span id="payBillDueDate"></span></p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="upi">UPI</option>
+                                <option value="card">Debit/Credit Card</option>
+                                <option value="netbanking">Net Banking</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+                        <div id="upiDetails" class="payment-details mb-3" style="display: none;">
+                            <label for="upiId" class="form-label">UPI ID</label>
+                            <input type="text" class="form-control" id="upiId" placeholder="username@bank">
+                        </div>
+                        <div id="cardDetails" class="payment-details mb-3" style="display: none;">
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="password" class="form-control" id="cvv" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="netbankingDetails" class="payment-details mb-3" style="display: none;">
+                            <label for="bankName" class="form-label">Select Bank</label>
+                            <select class="form-select" id="bankName">
+                                <option value="">Select Bank</option>
+                                <option value="sbi">State Bank of India</option>
+                                <option value="hdfc">HDFC Bank</option>
+                                <option value="icici">ICICI Bank</option>
+                                <option value="axis">Axis Bank</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="confirmPayment" required>
+                            <label class="form-check-label" for="confirmPayment">I confirm that I want to make this payment</label>
+                        </div>
+                        <input type="hidden" id="payBillId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="processBillPayment()">Pay Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="api.js"></script>
+    <script>
+        let currentTenant = null;
+        let isAdmin = false;
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        
+        // Theme toggle functionality
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            
+            // Update theme toggle icon
+            const themeIcon = document.querySelector('#themeToggle i');
+            themeIcon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        
+        // Document ready handler
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Apply saved theme
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                const themeIcon = document.querySelector('#themeToggle i');
+                themeIcon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                
+                // Add theme toggle event listener
+                document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+                
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+                
+                // Set admin status and show/hide Add Bill button
+                isAdmin = user.role === 'owner';
+                console.log('User role:', user.role);
+                console.log('Is admin:', isAdmin);
+                
+                // Always show the button for owner role
+                const addBillBtn = document.getElementById('addBillBtn');
+                if (addBillBtn) {
+                    console.log('Add Bill button found');
+                    addBillBtn.style.display = 'inline-block';
+                } else {
+                    console.log('Add Bill button not found');
+                }
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const tenantId = urlParams.get('id');
+            
+            if (!tenantId) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            if (user.role === 'tenant' && user.tenant_id !== parseInt(tenantId)) {
+                window.location.href = 'tenant-dashboard.html';
+                return;
+            }
+            
+                await loadTenantDetails(tenantId);
+                
+                // Set up filter event listeners
+                document.getElementById('applyFilters').addEventListener('click', filterBills);
+                document.getElementById('clearFilters').addEventListener('click', clearFilters);
+                document.getElementById('exportPDF').addEventListener('click', exportToPDF);
+                document.getElementById('exportCSV').addEventListener('click', exportToCSV);
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to load tenant details', 'error');
+            }
+        });
+        
+        // Variables to store the bill data
+        let allBills = [];
+        
+        // Core data loading functions
+        async function loadTenantDetails(tenantId) {
+            try {
+                currentTenant = await getTenant(tenantId);
+                if (!currentTenant) {
+                    showToast('Tenant not found', 'error');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                displayTenantInfo(currentTenant);
+                displayPaymentSummary(currentTenant.payment_history || {});
+                await loadBills(tenantId);
+                await loadNotifications(tenantId);
+                populateEditForm(currentTenant);
+                populateYearFilter();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to load tenant details', 'error');
+            }
+        }
+        
+        // Populate year filter with unique years from bills
+        function populateYearFilter() {
+            if (!allBills || allBills.length === 0) return;
+            
+            const years = [...new Set(allBills.map(bill => bill.year))].sort((a, b) => b - a);
+            const filterYear = document.getElementById('filterYear');
+            
+            // Clear existing options except the first one
+            while (filterYear.options.length > 1) {
+                filterYear.remove(1);
+            }
+            
+            // Add year options
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                filterYear.appendChild(option);
+            });
+        }
+        
+        // Filter bills based on selected criteria
+        function filterBills() {
+            const yearFilter = document.getElementById('filterYear').value;
+            const monthFilter = document.getElementById('filterMonth').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            
+            let filteredBills = [...allBills];
+            
+            if (yearFilter) {
+                filteredBills = filteredBills.filter(bill => bill.year == yearFilter);
+            }
+            
+            if (monthFilter) {
+                filteredBills = filteredBills.filter(bill => bill.month == monthFilter);
+            }
+            
+            if (statusFilter) {
+                filteredBills = filteredBills.filter(bill => bill.status === statusFilter);
+            }
+            
+            renderBills(filteredBills);
+        }
+        
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('filterYear').value = '';
+            document.getElementById('filterMonth').value = '';
+            document.getElementById('filterStatus').value = '';
+            
+            // Show all bills
+            renderBills(allBills);
+            
+            showToast('Filters cleared', 'success');
+        }
+        
+        // Export bills to PDF
+        function exportToPDF() {
+            // Get currently filtered bills
+            const yearFilter = document.getElementById('filterYear').value;
+            const monthFilter = document.getElementById('filterMonth').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            
+            let filteredBills = [...allBills];
+            
+            if (yearFilter) {
+                filteredBills = filteredBills.filter(bill => bill.year == yearFilter);
+            }
+            
+            if (monthFilter) {
+                filteredBills = filteredBills.filter(bill => bill.month == monthFilter);
+            }
+            
+            if (statusFilter) {
+                filteredBills = filteredBills.filter(bill => bill.status === statusFilter);
+            }
+            
+            if (filteredBills.length === 0) {
+                showToast('No bills to export', 'error');
+                return;
+            }
+            
+            // Create PDF content
+            let pdfContent = `Bills Report - ${currentTenant.name}\n`;
+            pdfContent += `Flat: ${currentTenant.flat_no}\n`;
+            pdfContent += `Generated: ${new Date().toLocaleString()}\n\n`;
+            
+            // Add table header
+            pdfContent += 'Month\tPrev Reading\tCurr Reading\tUnits\tElectricity\tRent\tMaid\tTotal\tDue Date\tStatus\n';
+            pdfContent += '---\t---\t---\t---\t---\t---\t---\t---\t---\t---\n';
+            
+            filteredBills.forEach(bill => {
+                const month = typeof bill.month === 'number' ? getMonthName(bill.month) : bill.month;
+                const prevReading = bill.previous_reading || 0;
+                const currReading = bill.current_reading || 0;
+                const unitsConsumed = currReading - prevReading;
+                const electricityCharge = bill.electricity_bill || bill.electricity_amount || 0;
+                const rentAmount = bill.rent_amount || 0;
+                const maidCharges = bill.maid_charges || 0;
+                const totalAmount = electricityCharge + rentAmount + maidCharges;
+                const dueDate = bill.due_date ? formatDate(bill.due_date) : 'N/A';
+                
+                pdfContent += `${month}\t${prevReading}\t${currReading}\t${unitsConsumed}\t₹${electricityCharge}\t₹${rentAmount}\t₹${maidCharges}\t₹${totalAmount}\t${dueDate}\t${bill.status}\n`;
+            });
+            
+            // Create blob and download
+            const blob = new Blob([pdfContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bills-${currentTenant.name}-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showToast('Bills exported to PDF format', 'success');
+        }
+        
+        // Export bills to CSV
+        function exportToCSV() {
+            // Get currently filtered bills
+            const yearFilter = document.getElementById('filterYear').value;
+            const monthFilter = document.getElementById('filterMonth').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            
+            let filteredBills = [...allBills];
+            
+            if (yearFilter) {
+                filteredBills = filteredBills.filter(bill => bill.year == yearFilter);
+            }
+            
+            if (monthFilter) {
+                filteredBills = filteredBills.filter(bill => bill.month == monthFilter);
+            }
+            
+            if (statusFilter) {
+                filteredBills = filteredBills.filter(bill => bill.status === statusFilter);
+            }
+            
+            if (filteredBills.length === 0) {
+                showToast('No bills to export', 'error');
+                return;
+            }
+            
+            // Create CSV content
+            let csvContent = 'Month,Previous Reading,Current Reading,Units Consumed,Electricity Bill,Rent Amount,Maid Charges,Total Amount,Due Date,Status\n';
+            
+            filteredBills.forEach(bill => {
+                const month = typeof bill.month === 'number' ? getMonthName(bill.month) : bill.month;
+                const prevReading = bill.previous_reading || 0;
+                const currReading = bill.current_reading || 0;
+                const unitsConsumed = currReading - prevReading;
+                const electricityCharge = bill.electricity_bill || bill.electricity_amount || 0;
+                const rentAmount = bill.rent_amount || 0;
+                const maidCharges = bill.maid_charges || 0;
+                const totalAmount = electricityCharge + rentAmount + maidCharges;
+                const dueDate = bill.due_date ? formatDate(bill.due_date) : 'N/A';
+                
+                csvContent += `"${month}",${prevReading},${currReading},${unitsConsumed},${electricityCharge},${rentAmount},${maidCharges},${totalAmount},"${dueDate}","${bill.status}"\n`;
+            });
+            
+            // Create blob and download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bills-${currentTenant.name}-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showToast('Bills exported to CSV format', 'success');
+        }
+        
+        async function loadBills(tenantId) {
+            try {
+                allBills = await getBills(tenantId);
+                renderBills(allBills);
+                populateYearFilter();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to load bills', 'error');
+            }
+        }
+        
+        function renderBills(bills) {
+                const billsHTML = bills.map(bill => {
+                // Handle different bill formats and ensure all values are defined
+                const month = typeof bill.month === 'number' ? getMonthName(bill.month) : bill.month || 'N/A';
+                const prevReading = bill.previous_reading || 0;
+                const currReading = bill.current_reading || 0;
+                const unitsConsumed = currReading - prevReading;
+                const electricityCharge = bill.electricity_bill || bill.electricity_amount || unitsConsumed * 10 || 0;
+                const rentAmount = bill.rent_amount || 0;
+                const maidCharges = bill.maid_charges || 0;
+                const dueDate = bill.due_date ? formatDate(bill.due_date) : 'N/A';
+                const status = bill.status || 'pending';
+                
+                // Calculate total amount
+                const totalAmount = electricityCharge + rentAmount + maidCharges;
+                
+                // Determine row class based on status
+                let rowClass = '';
+                if (status === 'paid') {
+                    rowClass = 'table-success';
+                } else if (status === 'pending') {
+                    // Check if overdue
+                    const today = new Date();
+                    const billDueDate = new Date(bill.due_date);
+                    if (billDueDate < today) {
+                        rowClass = 'table-danger';
+                    } else {
+                        rowClass = 'table-warning';
+                    }
+                }
+                
+                // Function to display dash if value is zero
+                const formatZeroAsBlank = (value, prefix = '') => {
+                    return value > 0 ? `${prefix}${value}` : '-';
+                };
+                    
+                    return `
+                    <tr class="${rowClass}">
+                        <td>${month}</td>
+                        <td>${formatZeroAsBlank(prevReading)}</td>
+                        <td>${formatZeroAsBlank(currReading)}</td>
+                        <td>${formatZeroAsBlank(unitsConsumed)}</td>
+                        <td>${formatZeroAsBlank(electricityCharge, '₹')}</td>
+                        <td>${formatZeroAsBlank(rentAmount, '₹')}</td>
+                        <td>${formatZeroAsBlank(maidCharges, '₹')}</td>
+                        <td>₹${totalAmount}</td>
+                        <td>${dueDate}</td>
+                        <td>
+                            <span class="badge bg-${getStatusColor(status)}">
+                                ${status}
+                                </span>
+                            </td>
+                            <td>
+                            <div class="btn-group btn-group-sm">
+                                <!-- View bill button for all users -->
+                                <button class="btn btn-info btn-sm" onclick="viewBillDetails(${bill.id})" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                
+                                ${!isAdmin && status === 'pending' ? `
+                                    <!-- Pay bill button for tenants -->
+                                    <button class="btn btn-success btn-sm" onclick="showPayBillModal(${bill.id})" title="Pay Bill">
+                                        <i class="fas fa-credit-card"></i>
+                                    </button>
+                                ` : ''}
+                                
+                                ${isAdmin ? `
+                                    <!-- Admin-only buttons -->
+                                    <button class="btn btn-primary btn-sm" onclick="showEditBillModal(${bill.id})" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    ${status === 'pending' ? `
+                                        <button class="btn btn-success btn-sm" onclick="markBillPaid(${bill.id})" title="Mark Paid">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    ` : ''}
+                                    <button class="btn btn-warning btn-sm" onclick="showSendBillModal(${bill.id})" title="Send Bill">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="confirmDeleteBill(${bill.id})" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
+            document.getElementById('billHistory').innerHTML = billsHTML || '<tr><td colspan="11" class="text-center">No bills found</td></tr>';
+        }
+        
+        // Load and display notifications
+        async function loadNotifications(tenantId) {
+            try {
+                const notifications = await getNotifications();
+                
+                // Filter for current tenant if needed
+                const tenantNotifications = tenantId ? 
+                    notifications.filter(n => n.tenant_id === parseInt(tenantId)) : 
+                    notifications;
+                
+                // Sort by date (newest first)
+                tenantNotifications.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Display notifications
+                displayNotifications(tenantNotifications);
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                showToast('Failed to load notifications', 'error');
+            }
+        }
+        
+        // Display functions
+        function displayTenantInfo(tenant) {
+            if (!tenant) return;
+            
+            // Update profile header
+            document.getElementById('profileName').textContent = tenant.name;
+            document.getElementById('profileFlatNo').textContent = `Flat: ${tenant.flat_no}`;
+            
+            // Update stats cards
+            document.getElementById('rentAmount').textContent = `₹${tenant.rent_amount}`;
+            document.getElementById('moveInDate').textContent = new Date(tenant.move_in_date).toLocaleDateString();
+            document.getElementById('totalBills').textContent = tenant.bills?.length || 0;
+            document.getElementById('dueDate').textContent = tenant.next_due_date ? 
+                new Date(tenant.next_due_date).toLocaleDateString() : '-';
+            
+            // Update personal information
+            document.getElementById('infoName').textContent = tenant.name;
+            document.getElementById('infoContact').textContent = tenant.contact_no;
+            document.getElementById('infoEmail').textContent = tenant.email || 'Not provided';
+            document.getElementById('infoStatus').textContent = tenant.status;
+            document.getElementById('infoStatus').className = `badge bg-${getStatusColor(tenant.status)}`;
+            
+            // Update emergency contact
+            if (tenant.emergency_contact) {
+                document.getElementById('emergencyName').textContent = tenant.emergency_contact.name || 'Not provided';
+                document.getElementById('emergencyRelation').textContent = tenant.emergency_contact.relationship || 'Not provided';
+                document.getElementById('emergencyContact').textContent = tenant.emergency_contact.phone || 'Not provided';
+                document.getElementById('emergencyEmail').textContent = tenant.emergency_contact.email || 'Not provided';
+            }
+            
+            // Update payment history overview
+            if (tenant.payment_history) {
+                document.getElementById('paymentStatus').textContent = tenant.payment_history.status || 'N/A';
+                document.getElementById('paymentStatus').className = `badge bg-${getPaymentStatusColor(tenant.payment_history.status)}`;
+                document.getElementById('lastPayment').textContent = tenant.payment_history.last_payment_date ? 
+                    new Date(tenant.payment_history.last_payment_date).toLocaleDateString() : 'No payments yet';
+                document.getElementById('paymentTrend').textContent = tenant.payment_history.trend || 'N/A';
+                document.getElementById('paymentTrend').className = `badge bg-${getPaymentTrendColor(tenant.payment_history.trend)}`;
+                document.getElementById('totalDue').textContent = `₹${tenant.payment_history.total_due || 0}`;
+            }
+        }
+        
+        function displayPaymentSummary(payment_history) {
+            if (!payment_history) return;
+            
+            document.getElementById('paymentSummary').innerHTML = `
+                <div class="row">
+                    <div class="col-12">
+                        <p><strong>Payment Status:</strong> ${payment_history.payment_status || 'N/A'}</p>
+                        <p><strong>Last Payment:</strong> ${payment_history.last_payment_date || 'N/A'}</p>
+                        <p><strong>Payment Trend:</strong> 
+                            <span class="badge bg-${getPaymentTrendColor(payment_history.payment_trend)}">
+                                ${payment_history.payment_trend || 'N/A'}
+                            </span>
+                        </p>
+                        <p><strong>Total Dues:</strong> ₹${payment_history.total_dues || 0}</p>
+                        <p><strong>Bill Dues:</strong> ₹${payment_history.total_bill_dues || 0}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displayNotifications(notifications) {
+            const notificationsList = document.getElementById('notificationsList');
+            if (!notifications || notifications.length === 0) {
+                notificationsList.innerHTML = '<p class="text-muted">No notifications</p>';
+                return;
+            }
+            
+            notificationsList.innerHTML = notifications.map(notification => `
+                <div class="notification-item border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                            <h6 class="mb-1">${notification.title || 'Notification'}</h6>
+                            <p class="mb-1">${notification.message}</p>
+                            <small class="text-muted">${new Date(notification.date).toLocaleString()}</small>
+                            </div>
+                        <span class="badge bg-${notification.type === 'urgent' ? 'danger' : 'info'} ms-2">
+                            ${notification.type || 'info'}
+                                </span>
+                        </div>
+                    </div>
+                `).join('');
+        }
+        
+        // Utility functions
+        function getMonthName(month) {
+            const months = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            return months[month - 1];
+        }
+        
+        function getPaymentStatusColor(status) {
+            switch (status?.toLowerCase()) {
+                case 'paid': return 'success';
+                case 'pending': return 'warning';
+                case 'overdue': return 'danger';
+                default: return 'secondary';
+            }
+        }
+        
+        function getPaymentTrendColor(trend) {
+            switch (trend?.toLowerCase()) {
+                case 'excellent': return 'success';
+                case 'good': return 'info';
+                case 'fair': return 'warning';
+                case 'poor': return 'danger';
+                default: return 'secondary';
+            }
+        }
+        
+        function getStatusColor(status) {
+            switch (status) {
+                case 'paid': return 'success';
+                case 'pending': return 'warning';
+                default: return 'secondary';
+            }
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString();
+        }
+        
+        function showToast(message, type = 'success') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastHtml = `
+                <div class="toast" role="alert">
+                    <div class="toast-header bg-${type} text-white">
+                        <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                            </div>
+                    <div class="toast-body">
+                        ${message}
+                        </div>
+                    </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toast = new bootstrap.Toast(toastContainer.lastElementChild);
+            toast.show();
+        }
+        
+        // Form handling functions
+        function populateEditForm(tenant) {
+            if (!tenant) return;
+            
+            document.getElementById('editName').value = tenant.name || '';
+            document.getElementById('editContact').value = tenant.contact_no || '';
+            document.getElementById('editRent').value = tenant.rent_amount || '';
+            document.getElementById('editDueDay').value = tenant.rent_due_day || '';
+            document.getElementById('editReminderDays').value = tenant.reminder_days || '';
+            document.getElementById('editReminderMethod').value = tenant.reminder_method || 'notification';
+            document.getElementById('editStatus').value = tenant.status || 'active';
+        }
+        
+        function calculateUnits() {
+            const previousReading = parseInt(document.getElementById('previousReading').value) || 0;
+            const currentReading = parseInt(document.getElementById('currentReading').value) || 0;
+            
+            if (currentReading >= previousReading) {
+                const unitsConsumed = currentReading - previousReading;
+                document.getElementById('unitsConsumed').value = unitsConsumed;
+            } else {
+                document.getElementById('unitsConsumed').value = '';
+                showToast('Current reading cannot be less than previous reading', 'error');
+            }
+        }
+        
+        // Event handlers
+        async function updateTenant() {
+            if (!currentTenant || !currentTenant.id) {
+                showToast('No tenant data available', 'error');
+                return;
+            }
+            
+            try {
+                const data = {
+                    name: document.getElementById('editName').value,
+                    contact_no: document.getElementById('editContact').value,
+                    rent_amount: parseInt(document.getElementById('editRent').value),
+                    rent_due_day: parseInt(document.getElementById('editDueDay').value),
+                    reminder_days: parseInt(document.getElementById('editReminderDays').value),
+                    reminder_method: document.getElementById('editReminderMethod').value,
+                    status: document.getElementById('editStatus').value
+                };
+                
+                await updateTenantDetails(currentTenant.id, data);
+                showToast('Tenant details updated successfully');
+                bootstrap.Modal.getInstance(document.getElementById('editTenantModal')).hide();
+                loadTenantDetails(currentTenant.id);
+            } catch (error) {
+                showToast('Failed to update tenant', 'error');
+                console.error('Error:', error);
+            }
+        }
+        
+        async function addBill() {
+            try {
+                const data = {
+                    tenant_id: currentTenant.id,
+                    month: parseInt(document.getElementById('billMonth').value),
+                    year: parseInt(document.getElementById('billYear').value),
+                    previous_reading: parseInt(document.getElementById('previousReading').value),
+                    current_reading: parseInt(document.getElementById('currentReading').value),
+                    units_consumed: parseInt(document.getElementById('unitsConsumed').value),
+                    electricity_bill: parseInt(document.getElementById('electricityBill').value),
+                    maid_charges: parseInt(document.getElementById('maidCharges').value),
+                    due_date: document.getElementById('dueDate').value,
+                    status: 'pending'
+                };
+                
+                if (!data.month || !data.year || !data.previous_reading || !data.current_reading || 
+                    !data.units_consumed || !data.electricity_bill || !data.maid_charges || !data.due_date) {
+                    showToast('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                if (data.current_reading < data.previous_reading) {
+                    showToast('Current reading cannot be less than previous reading', 'error');
+                    return;
+                }
+                
+                await addBill(data);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addBillModal'));
+                modal.hide();
+                document.getElementById('addBillForm').reset();
+                await loadBills(currentTenant.id);
+                showToast('Bill added successfully', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to add bill', 'error');
+            }
+        }
+        
+        async function markBillPaid(billId) {
+            try {
+                await updateBill(billId, { 
+                        status: 'paid',
+                        payment_date: new Date().toISOString()
+                });
+                showToast('Bill marked as paid');
+                loadTenantDetails(currentTenant.id);
+            } catch (error) {
+                showToast('Failed to mark bill as paid', 'error');
+            }
+        }
+        
+        async function showEditBillModal(billId, viewOnly = false) {
+            try {
+                const bill = await getBill(billId);
+                if (!bill) {
+                    showToast('Bill not found', 'error');
+                    return;
+                }
+                
+                document.getElementById('editBillId').value = bill.id;
+                document.getElementById('editBillMonth').value = bill.month;
+                document.getElementById('editBillYear').value = bill.year;
+                document.getElementById('editPreviousReading').value = bill.previous_reading;
+                document.getElementById('editCurrentReading').value = bill.current_reading;
+                document.getElementById('editMaidCharges').value = bill.maid_charges;
+                document.getElementById('editDueDate').value = bill.due_date.split('T')[0];
+                document.getElementById('editStatus').value = bill.status;
+                
+                // Calculate units consumed
+                const unitsConsumed = bill.current_reading - bill.previous_reading;
+                
+                // Add units consumed field if it doesn't exist
+                if (!document.getElementById('editUnitsConsumed')) {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'mb-3';
+                    formGroup.innerHTML = `
+                        <label for="editUnitsConsumed" class="form-label">Units Consumed</label>
+                        <input type="number" class="form-control" id="editUnitsConsumed" readonly>
+                    `;
+                    document.getElementById('editBillForm').insertBefore(
+                        formGroup, 
+                        document.getElementById('editMaidCharges').parentNode
+                    );
+                }
+                document.getElementById('editUnitsConsumed').value = unitsConsumed;
+                
+                // Add electricity bill amount field if it doesn't exist
+                if (!document.getElementById('editElectricityBill')) {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'mb-3';
+                    formGroup.innerHTML = `
+                        <label for="editElectricityBill" class="form-label">Electricity Bill Amount</label>
+                        <input type="number" class="form-control" id="editElectricityBill" min="0">
+                    `;
+                    document.getElementById('editBillForm').insertBefore(
+                        formGroup, 
+                        document.getElementById('editMaidCharges').parentNode
+                    );
+                }
+                document.getElementById('editElectricityBill').value = bill.electricity_bill || bill.electricity_amount || unitsConsumed * 10;
+                
+                // If view-only mode, disable all inputs and update the modal title
+                const modalTitle = document.querySelector('#editBillModal .modal-title');
+                const updateButton = document.querySelector('#editBillModal .btn-primary');
+                const formInputs = document.querySelectorAll('#editBillForm input, #editBillForm select');
+                
+                if (viewOnly) {
+                    modalTitle.textContent = 'Bill Details';
+                    updateButton.style.display = 'none';
+                    formInputs.forEach(input => {
+                        input.setAttribute('disabled', 'disabled');
+                    });
+                } else {
+                    modalTitle.textContent = 'Edit Bill';
+                    updateButton.style.display = 'block';
+                    formInputs.forEach(input => {
+                        input.removeAttribute('disabled');
+                    });
+                    // Always set units consumed to readonly
+                    document.getElementById('editUnitsConsumed').setAttribute('readonly', 'readonly');
+                }
+                
+                const modal = new bootstrap.Modal(document.getElementById('editBillModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to load bill details', 'error');
+            }
+        }
+        
+        async function updateBillRecord() {
+            const billId = document.getElementById('editBillId').value;
+            const data = {
+                month: parseInt(document.getElementById('editBillMonth').value),
+                year: parseInt(document.getElementById('editBillYear').value),
+                previous_reading: parseInt(document.getElementById('editPreviousReading').value) || 0,
+                current_reading: parseInt(document.getElementById('editCurrentReading').value) || 0,
+                maid_charges: parseInt(document.getElementById('editMaidCharges').value) || 0,
+                due_date: document.getElementById('editDueDate').value,
+                status: document.getElementById('editStatus').value,
+                electricity_bill: parseInt(document.getElementById('editElectricityBill').value) || 0
+            };
+            
+            // Calculate units consumed
+            const unitsConsumed = data.current_reading - data.previous_reading;
+            
+            // Validation
+            if (data.current_reading < data.previous_reading) {
+                showToast('Current reading cannot be less than previous reading', 'error');
+                return;
+            }
+            
+            if (!data.due_date) {
+                showToast('Due date is required', 'error');
+                return;
+            }
+            
+            try {
+                await updateBill(billId, data);
+                await loadBills(currentTenant.id);
+                bootstrap.Modal.getInstance(document.getElementById('editBillModal')).hide();
+                showToast('Bill updated successfully', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to update bill: ' + error.message, 'error');
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('previousReading').addEventListener('input', calculateUnits);
+        document.getElementById('currentReading').addEventListener('input', calculateUnits);
+        
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                await logout();
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            } catch (error) {
+                showToast('Failed to logout', 'error');
+                console.error('Error:', error);
+            }
+        });
+
+        // Show delete confirmation modal
+        function confirmDeleteBill(billId) {
+            document.getElementById('deleteBillId').value = billId;
+            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            modal.show();
+        }
+        
+        // Delete bill record
+        async function deleteBillRecord() {
+            const billId = document.getElementById('deleteBillId').value;
+            try {
+                await deleteBill(billId);
+                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+                showToast('Bill deleted successfully');
+                await loadBills(currentTenant.id);
+            } catch (error) {
+                console.error('Error deleting bill:', error);
+                showToast('Failed to delete bill: ' + error.message, 'error');
+            }
+        }
+        
+        // View bill details
+        function viewBillDetails(billId) {
+            showEditBillModal(billId, true); // true indicates view-only mode
+        }
+
+        // Emergency Contact Form Handling
+        document.getElementById('saveEmergencyContact').addEventListener('click', async () => {
+            const form = document.getElementById('emergencyContactForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const emergencyContactData = {
+                name: document.getElementById('emergencyContactName').value,
+                relationship: document.getElementById('emergencyContactRelation').value,
+                contact_number: document.getElementById('emergencyContactNumber').value,
+                email: document.getElementById('emergencyContactEmail').value
+            };
+
+            try {
+                // Update emergency contact information in the database
+                await updateEmergencyContact(currentTenant.id, emergencyContactData);
+
+                // Update the display
+                document.getElementById('emergencyName').textContent = emergencyContactData.name;
+                document.getElementById('emergencyRelation').textContent = emergencyContactData.relationship;
+                document.getElementById('emergencyContact').textContent = emergencyContactData.contact_number;
+                document.getElementById('emergencyEmail').textContent = emergencyContactData.email;
+
+                // Close the modal
+                bootstrap.Modal.getInstance(document.getElementById('editEmergencyContactModal')).hide();
+                showToast('Emergency contact updated successfully', 'success');
+            } catch (error) {
+                console.error('Error updating emergency contact:', error);
+                showToast('Failed to update emergency contact', 'error');
+            }
+        });
+
+        // Load emergency contact data when editing
+        document.getElementById('editEmergencyContactModal').addEventListener('show.bs.modal', () => {
+            document.getElementById('emergencyContactName').value = document.getElementById('emergencyName').textContent;
+            document.getElementById('emergencyContactRelation').value = document.getElementById('emergencyRelation').textContent;
+            document.getElementById('emergencyContactNumber').value = document.getElementById('emergencyContact').textContent;
+            document.getElementById('emergencyContactEmail').value = document.getElementById('emergencyEmail').textContent;
+        });
+        
+        // Set up the send bill modal with the selected bill data
+        async function showSendBillModal(billId) {
+            try {
+                const bill = await getBill(billId);
+                if (!bill) {
+                    showToast('Bill not found', 'error');
+                    return;
+                }
+                
+                // Make sure the modal exists before trying to interact with it
+                const sendBillModal = document.getElementById('sendBillModal');
+                if (!sendBillModal) {
+                    console.error('Send Bill Modal not found in the DOM');
+                    showToast('Error: Send Bill Modal not found', 'error');
+                    return;
+                }
+                
+                // Set the month and year in the send bill modal
+                const monthSelect = document.getElementById('sendBillMonth');
+                const yearInput = document.getElementById('sendBillYear');
+                
+                if (monthSelect) monthSelect.value = bill.month;
+                if (yearInput) yearInput.value = bill.year;
+                
+                // Add bill ID to a hidden field for reference
+                const billIdField = document.getElementById('sendBillId');
+                if (!billIdField) {
+                    const sendBillForm = document.getElementById('sendBillForm');
+                    if (sendBillForm) {
+                        const hiddenField = document.createElement('input');
+                        hiddenField.type = 'hidden';
+                        hiddenField.id = 'sendBillId';
+                        sendBillForm.appendChild(hiddenField);
+                    }
+                }
+                
+                // Set the bill ID
+                const updatedBillIdField = document.getElementById('sendBillId');
+                if (updatedBillIdField) updatedBillIdField.value = billId;
+                
+                // Add a message template based on the bill
+                const electricityAmount = bill.electricity_bill || bill.electricity_amount || 0;
+                const rentAmount = bill.rent_amount || 0;
+                const maidCharges = bill.maid_charges || 0;
+                const totalAmount = electricityAmount + rentAmount + maidCharges;
+                
+                const messageArea = document.getElementById('sendBillMessage');
+                if (messageArea) {
+                    messageArea.value = 
+                        `Dear Tenant,\n\nYour bill for ${getMonthName(bill.month)} ${bill.year} is ready.\n` +
+                        `Total amount due: ₹${totalAmount}\n` +
+                        `Due date: ${formatDate(bill.due_date)}\n\n` +
+                        `Please make the payment at your earliest convenience.\n\nThank you.`;
+                }
+                
+                // Show the modal
+                const modal = new bootstrap.Modal(sendBillModal);
+                modal.show();
+            } catch (error) {
+                console.error('Error preparing send bill modal:', error);
+                showToast('Failed to prepare send bill notification: ' + error.message, 'error');
+            }
+        }
+        
+        // Show pay bill modal
+        async function showPayBillModal(billId) {
+            try {
+                const bill = await getBill(billId);
+                if (!bill) {
+                    showToast('Bill not found', 'error');
+                    return;
+                }
+                
+                // Make sure the modal exists
+                const payBillModal = document.getElementById('payBillModal');
+                if (!payBillModal) {
+                    console.error('Pay Bill Modal not found in the DOM');
+                    showToast('Error: Pay Bill Modal not found', 'error');
+                    return;
+                }
+                
+                // Set bill details in the modal
+                const monthDisplay = document.getElementById('payBillMonth');
+                if (monthDisplay) {
+                    const month = typeof bill.month === 'number' ? getMonthName(bill.month) : bill.month;
+                    monthDisplay.textContent = `${month} ${bill.year}`;
+                }
+                
+                // Calculate total amount
+                const electricityAmount = bill.electricity_bill || bill.electricity_amount || 0;
+                const rentAmount = bill.rent_amount || 0;
+                const maidCharges = bill.maid_charges || 0;
+                const totalAmount = electricityAmount + rentAmount + maidCharges;
+                
+                const amountDisplay = document.getElementById('payBillAmount');
+                if (amountDisplay) {
+                    amountDisplay.textContent = `₹${totalAmount}`;
+                }
+                
+                const dueDateDisplay = document.getElementById('payBillDueDate');
+                if (dueDateDisplay) {
+                    dueDateDisplay.textContent = formatDate(bill.due_date);
+                }
+                
+                // Set bill ID in hidden field
+                const billIdField = document.getElementById('payBillId');
+                if (billIdField) {
+                    billIdField.value = billId;
+                }
+                
+                // Reset payment method
+                const paymentMethodSelect = document.getElementById('paymentMethod');
+                if (paymentMethodSelect) {
+                    paymentMethodSelect.value = '';
+                }
+                
+                // Hide all payment detail sections
+                document.querySelectorAll('.payment-details').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Reset confirm checkbox
+                const confirmCheckbox = document.getElementById('confirmPayment');
+                if (confirmCheckbox) {
+                    confirmCheckbox.checked = false;
+                }
+                
+                // Show the modal
+                const modal = new bootstrap.Modal(payBillModal);
+                modal.show();
+            } catch (error) {
+                console.error('Error preparing pay bill modal:', error);
+                showToast('Failed to prepare payment form: ' + error.message, 'error');
+            }
+        }
+        
+        // Process bill payment
+        async function processBillPayment() {
+            try {
+                const billId = document.getElementById('payBillId').value;
+                const paymentMethod = document.getElementById('paymentMethod').value;
+                const confirmPayment = document.getElementById('confirmPayment').checked;
+                
+                if (!paymentMethod) {
+                    showToast('Please select a payment method', 'error');
+                    return;
+                }
+                
+                if (!confirmPayment) {
+                    showToast('Please confirm your payment', 'error');
+                    return;
+                }
+                
+                // Additional validation based on payment method
+                if (paymentMethod === 'upi' && document.getElementById('upiDetails').style.display !== 'none') {
+                    const upiId = document.getElementById('upiId').value;
+                    if (!upiId) {
+                        showToast('Please enter your UPI ID', 'error');
+                        return;
+                    }
+                } else if (paymentMethod === 'card' && document.getElementById('cardDetails').style.display !== 'none') {
+                    const cardNumber = document.getElementById('cardNumber').value;
+                    const expiryDate = document.getElementById('expiryDate').value;
+                    const cvv = document.getElementById('cvv').value;
+                    
+                    if (!cardNumber || !expiryDate || !cvv) {
+                        showToast('Please fill in all card details', 'error');
+                        return;
+                    }
+                } else if (paymentMethod === 'netbanking' && document.getElementById('netbankingDetails').style.display !== 'none') {
+                    const bankName = document.getElementById('bankName').value;
+                    if (!bankName) {
+                        showToast('Please select your bank', 'error');
+                        return;
+                    }
+                }
+                
+                // Update bill status to 'paid'
+                const data = {
+                    status: 'paid',
+                    payment_date: new Date().toISOString(),
+                    payment_method: paymentMethod
+                };
+                
+                await updateBill(billId, data);
+                
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('payBillModal')).hide();
+                
+                // Show success message
+                showToast('Payment successful', 'success');
+                
+                // Reload bills
+                await loadBills(currentTenant.id);
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                showToast('Payment failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Handle payment method change
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            if (paymentMethodSelect) {
+                paymentMethodSelect.addEventListener('change', function() {
+                    // Hide all payment details sections first
+                    document.querySelectorAll('.payment-details').forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    
+                    // Show the selected payment method's details
+                    const selectedMethod = this.value;
+                    if (selectedMethod === 'upi') {
+                        document.getElementById('upiDetails').style.display = 'block';
+                    } else if (selectedMethod === 'card') {
+                        document.getElementById('cardDetails').style.display = 'block';
+                    } else if (selectedMethod === 'netbanking') {
+                        document.getElementById('netbankingDetails').style.display = 'block';
+                    }
+                });
+            }
+        });
+
+        // Function to generate and send bill notification
+        async function generateAndSendBill() {
+            try {
+                const month = parseInt(document.getElementById('sendBillMonth').value);
+                const year = parseInt(document.getElementById('sendBillYear').value);
+                const additionalMessage = document.getElementById('sendBillMessage').value.trim();
+                const isUrgent = document.getElementById('sendAsUrgent').checked;
+                const billId = document.getElementById('sendBillId')?.value;
+                
+                let bill;
+                
+                // If this is triggered from the bill list with a specific bill ID
+                if (billId) {
+                    bill = await getBill(billId);
+                    if (!bill) {
+                        showToast('Bill not found', 'error');
+                        return;
+                    }
+                }
+                
+                // Get the latest bill for this month/year if exists
+                const bills = await getBills(currentTenant.id);
+                const existingBill = bill || bills.find(b => b.month == month && b.year == year);
+                
+                let billDetails = '';
+                let billAmount = 0;
+                
+                if (existingBill) {
+                    // Use existing bill data
+                    const electricityAmount = existingBill.electricity_bill || existingBill.electricity_amount || 0;
+                    const rentAmount = existingBill.rent_amount || 0;
+                    const maidCharges = existingBill.maid_charges || 0;
+                    
+                    billAmount = electricityAmount + rentAmount + maidCharges;
+                    
+                    billDetails = `
+                        Month: ${getMonthName(month)} ${year}
+                        Electricity: ₹${electricityAmount}
+                        Rent: ₹${rentAmount}
+                        Maid Charges: ₹${maidCharges}
+                        Total Amount: ₹${billAmount}
+                        Due Date: ${formatDate(existingBill.due_date)}
+                    `;
+                } else {
+                    // Get rental amount from tenant info
+                    const rentAmount = currentTenant.rent_amount || 0;
+                    billAmount = rentAmount;
+                    
+                    // Create a due date for the 5th of next month
+                    const dueDate = new Date(year, month, 5); // Note: month is 0-indexed in JS Date
+                    
+                    billDetails = `
+                        Month: ${getMonthName(month)} ${year}
+                        Rent: ₹${rentAmount}
+                        Total Amount: ₹${billAmount}
+                        Due Date: ${dueDate.toLocaleDateString()}
+                    `;
+                }
+                
+                // Create notification
+                const notificationTitle = `Bill for ${getMonthName(month)} ${year}`;
+                const notificationMessage = `Your bill for ${getMonthName(month)} ${year} has been generated. 
+                ${billDetails}
+                ${additionalMessage ? '\nMessage: ' + additionalMessage : ''}`;
+                
+                // Simulate sending notification
+                try {
+                    // In a real system, you'd send this via API
+                    console.log('Sending notification:', {
+                        title: notificationTitle,
+                        message: notificationMessage,
+                        isUrgent
+                    });
+                    
+                    // Add to notifications list
+                    const notificationData = {
+                        id: Date.now(),
+                        tenant_id: currentTenant.id,
+                        title: notificationTitle,
+                        message: notificationMessage,
+                        type: isUrgent ? 'urgent' : 'info',
+                        date: new Date().toISOString()
+                    };
+                    
+                    // Create or update bill if needed
+                    if (!existingBill) {
+                        // Create a simplified bill
+                        const newBill = {
+                            id: Date.now(),
+                            tenant_id: currentTenant.id,
+                            month: month,
+                            year: year,
+                            rent_amount: currentTenant.rent_amount || 0,
+                            maid_charges: 0,
+                            due_date: new Date(year, month, 5).toISOString(),
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        };
+                        
+                        await addBill(newBill);
+                    }
+                    
+                    // Save notification
+                    await saveNotification(notificationData);
+                    
+                    // Hide modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('sendBillModal'));
+                    if (modal) modal.hide();
+                    
+                    showToast('Bill notification sent successfully', 'success');
+                    
+                    // Refresh bills
+                    await loadBills(currentTenant.id);
+                    
+                    // Refresh notifications
+                    await loadNotifications(currentTenant.id);
+                } catch (error) {
+                    console.error('Failed to send notification:', error);
+                    showToast('Failed to send notification: ' + error.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error generating bill:', error);
+                showToast('Failed to generate bill: ' + error.message, 'error');
+            }
+        }
+
+        // Save notification to storage
+        async function saveNotification(notification) {
+            try {
+                // Get existing notifications
+                let notifications = await getNotifications() || [];
+                
+                // Add the new notification
+                notifications.push(notification);
+                
+                // In a real app, you'd use an API endpoint
+                // For now, we'll simulate by storing in memory
+                window._notificationsData = notifications;
+                
+                console.log('Notification saved:', notification);
+                return notification;
+            } catch (error) {
+                console.error('Error saving notification:', error);
+                throw new Error('Failed to save notification');
+            }
+        }
+
+        // Override the API function for local storage
+        async function getNotifications() {
+            try {
+                // In a real app, this would be an API call
+                // For now, we'll use in-memory storage
+                if (!window._notificationsData) {
+                    window._notificationsData = [];
+                }
+                
+                // Get current tenant's notifications
+                if (currentTenant) {
+                    return window._notificationsData.filter(n => n.tenant_id === currentTenant.id);
+                }
+                
+                return window._notificationsData;
+            } catch (error) {
+                console.error('Error getting notifications:', error);
+                return [];
+            }
+        }
+    </script>
+
+    <style>
+        .notifications-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+    </style>
+</body>
+</html>

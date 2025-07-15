@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Tenants - Building Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/pwa-app/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Building Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="tenants.html" class="nav-link active">Tenants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">Settings</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Tenants</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTenantModal">
+                        <i class="fas fa-plus"></i> Add Tenant
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="row mb-4">
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search tenants...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tenants List -->
+        <div class="row" id="tenantsList">
+            <!-- Tenants will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Add Tenant Modal -->
+    <div class="modal fade" id="addTenantModal" tabindex="-1" aria-labelledby="addTenantModalLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTenantModalLabel">Add New Tenant</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTenantForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Building</label>
+                                    <select class="form-control" id="tenantBuilding" required>
+                                        <option value="">Select Building</option>
+                                        <!-- Buildings will be loaded here -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Flat Number</label>
+                                    <select class="form-control" id="tenantFlat" required>
+                                        <option value="">Select Flat</option>
+                                        <!-- Flats will be loaded here -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="tenantName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contact Number</label>
+                                    <input type="tel" class="form-control" id="tenantContact" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Aadhar Number</label>
+                                    <input type="text" class="form-control" id="tenantAadhar" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Rent Amount</label>
+                                    <input type="number" class="form-control" id="tenantRent" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Rent Due Day</label>
+                                    <input type="number" class="form-control" id="tenantDueDay" min="1" max="31" value="5" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Reminder Days Before Due</label>
+                                    <input type="number" class="form-control" id="tenantReminderDays" min="1" max="15" value="5" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Reminder Method</label>
+                                    <select class="form-control" id="tenantReminderMethod" required>
+                                        <option value="notification">In-App Notification</option>
+                                        <option value="sms">SMS</option>
+                                        <option value="both">Both</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Move-in Date</label>
+                                    <input type="date" class="form-control" id="tenantMoveIn" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Previous Meter Reading</label>
+                                    <input type="number" class="form-control" id="tenantPreviousMeter" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Current Meter Reading</label>
+                                    <input type="number" class="form-control" id="tenantCurrentMeter" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Agreement File URL</label>
+                                    <input type="url" class="form-control" id="tenantAgreement" placeholder="https://example.com/agreement.pdf">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Tenant</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="api.js"></script>
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'owner') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            loadBuildings();
+            loadTenants();
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', debounce(loadTenants, 300));
+            document.getElementById('addTenantForm').addEventListener('submit', handleAddTenant);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            
+            // Add building select change listener
+            document.getElementById('tenantBuilding').addEventListener('change', (e) => {
+                const buildingId = e.target.value;
+                if (buildingId) {
+                    loadFlats(buildingId);
+                } else {
+                    document.getElementById('tenantFlat').innerHTML = '<option value="">Select Flat</option>';
+                }
+            });
+        }
+        
+        async function loadBuildings() {
+            try {
+                const buildings = await getBuildings();
+                
+                const buildingSelect = document.getElementById('tenantBuilding');
+                buildingSelect.innerHTML = `
+                    <option value="">Select Building</option>
+                    ${buildings.map(building => `
+                        <option value="${building.id}">${building.name}</option>
+                    `).join('')}
+                `;
+            } catch (error) {
+                showToast('Failed to load buildings', 'error');
+                console.error('Error:', error);
+            }
+        }
+        
+        async function loadFlats(buildingId) {
+            try {
+                const building = await getBuildingDetails(buildingId);
+                
+                const flatSelect = document.getElementById('tenantFlat');
+                flatSelect.innerHTML = `
+                    <option value="">Select Flat</option>
+                    ${Object.entries(building.flats || {}).map(([flatNo, flat]) => `
+                        <option value="${flatNo}" ${flat.status !== 'vacant' ? 'disabled' : ''}>
+                            Flat ${flatNo} - ${flat.type} (${flat.status})
+                        </option>
+                    `).join('')}
+                `;
+            } catch (error) {
+                showToast('Failed to load flats', 'error');
+                console.error('Error:', error);
+            }
+        }
+        
+        async function loadTenants() {
+            try {
+                const searchTerm = document.getElementById('searchInput').value;
+                const tenants = await getTenants();
+                
+                const tenantsHTML = tenants.map(tenant => {
+                    const rentDueDate = tenant.rent_due_day ? `${tenant.rent_due_day}${getOrdinalSuffix(tenant.rent_due_day)} of every month` : 'Not set';
+                    const billAmount = tenant.bill_amount ? `Rs. ${tenant.bill_amount}` : 'Not generated';
+                    const billDate = tenant.bill_date ? new Date(tenant.bill_date).toLocaleDateString() : 'N/A';
+                    const meterReading = tenant.current_meter_reading ? `${tenant.current_meter_reading} units` : 'Not set';
+                    
+                    return `
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">${tenant.name}</h5>
+                                    <p class="card-text">
+                                        <strong>Building:</strong> ${tenant.building_name}<br>
+                                        <strong>Flat:</strong> ${tenant.flat_no}<br>
+                                        <strong>Contact:</strong> ${tenant.contact_no}<br>
+                                        <strong>Aadhar:</strong> ${tenant.aadhar_no || 'Not provided'}<br>
+                                        <strong>Rent:</strong> Rs. ${tenant.rent_amount}<br>
+                                        <strong>Due Date:</strong> ${rentDueDate}<br>
+                                        <strong>Current Bill:</strong> ${billAmount}<br>
+                                        <strong>Bill Date:</strong> ${billDate}<br>
+                                        <strong>Meter Reading:</strong> ${meterReading}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-${tenant.status === 'active' ? 'success' : 'secondary'}">
+                                            ${tenant.status}
+                                        </span>
+                                        <button class="btn btn-primary btn-sm" onclick="viewTenantDetails(${tenant.id})">
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('tenantsList').innerHTML = tenantsHTML || '<div class="col"><p>No tenants found</p></div>';
+            } catch (error) {
+                showToast('Failed to load tenants', 'error');
+                console.error('Error:', error);
+            }
+        }
+        
+        async function handleAddTenant(e) {
+            e.preventDefault();
+            
+            const data = {
+                building_id: parseInt(document.getElementById('tenantBuilding').value),
+                flat_no: document.getElementById('tenantFlat').value,
+                name: document.getElementById('tenantName').value,
+                contact_no: document.getElementById('tenantContact').value,
+                aadhar_no: document.getElementById('tenantAadhar').value,
+                rent_amount: parseInt(document.getElementById('tenantRent').value),
+                rent_due_day: parseInt(document.getElementById('tenantDueDay').value),
+                reminder_days: parseInt(document.getElementById('tenantReminderDays').value),
+                reminder_method: document.getElementById('tenantReminderMethod').value,
+                move_in_date: document.getElementById('tenantMoveIn').value,
+                previous_meter_reading: parseInt(document.getElementById('tenantPreviousMeter').value || 0),
+                current_meter_reading: parseInt(document.getElementById('tenantCurrentMeter').value || 0),
+                agreement_file: document.getElementById('tenantAgreement').value
+            };
+            
+            try {
+                await addTenant(data);
+                
+                // Close modal and reset form
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addTenantModal'));
+                modal.hide();
+                document.getElementById('addTenantForm').reset();
+                
+                // Reload tenants
+                loadTenants();
+                showToast('Tenant added successfully');
+            } catch (error) {
+                showToast('Failed to add tenant', 'error');
+                console.error('Error:', error);
+            }
+        }
+        
+        async function viewTenantDetails(tenantId) {
+            window.location.href = `tenant-details.html?id=${tenantId}`;
+        }
+        
+        async function handleLogout() {
+            try {
+                await logout();
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            } catch (error) {
+                showToast('Failed to logout', 'error');
+                console.error('Error:', error);
+            }
+        }
+        
+        // Utility function to debounce search input
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+        
+        // Function to get ordinal suffix for numbers
+        function getOrdinalSuffix(number) {
+            const j = number % 10;
+            const k = number % 100;
+            if (j === 1 && k !== 11) {
+                return 'st';
+            }
+            if (j === 2 && k !== 12) {
+                return 'nd';
+            }
+            if (j === 3 && k !== 13) {
+                return 'rd';
+            }
+            return 'th';
+        }
+        
+        function showToast(message, type = 'success') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+    </script>
+</body>
+</html> 

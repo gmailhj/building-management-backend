@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "building_id": 1,
+    "flat_no": "101",
+    "name": "John Doe",
+    "contact_no": "9876543210",
+    "move_in_date": "2024-01-01",
+    "move_out_date": "2024-02-28",
+    "rent_amount": 10000
+  },
+  {
+    "id": 2,
+    "building_id": 1,
+    "flat_no": "101",
+    "name": "Jane Smith",
+    "contact_no": "9876543211",
+    "move_in_date": "2023-06-01",
+    "move_out_date": "2023-12-31",
+    "rent_amount": 9500
+  },
+  {
+    "id": 3,
+    "building_id": 1,
+    "flat_no": "102",
+    "name": "Mike Johnson",
+    "contact_no": "9876543212",
+    "move_in_date": "2024-01-01",
+    "move_out_date": "2024-03-01",
+    "rent_amount": 10000
+  }
+] 

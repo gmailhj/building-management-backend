@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Dashboard - Building Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Tenant Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Tenant Information -->
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Tenant Information</h5>
+                        <div id="tenantInfo">
+                            <!-- Tenant info will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Payment Summary</h5>
+                        <div id="paymentSummary">
+                            <!-- Payment summary will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Bills -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Recent Bills</h5>
+                        <div id="recentBills">
+                            <!-- Recent bills will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Notifications -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Recent Notifications</h5>
+                        <div id="recentNotifications">
+                            <!-- Recent notifications will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container for Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="api.js"></script>
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'tenant') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            loadTenantDashboard();
+        });
+        
+        async function loadTenantDashboard() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const data = await apiRequest(`/api/tenants/${user.tenant_id}/dashboard`);
+                
+                displayTenantInfo(data.tenant);
+                displayPaymentSummary(data.payment_history);
+                displayRecentBills(data.recent_bills);
+                displayNotifications(data.recent_notifications);
+            } catch (error) {
+                showToast('Failed to load dashboard', 'error');
+                console.error('Error:', error);
+            }
+        }
+        
+        function displayTenantInfo(tenant) {
+            document.getElementById('tenantInfo').innerHTML = `
+                <p><strong>Name:</strong> ${tenant.name}</p>
+                <p><strong>Flat:</strong> ${tenant.flat_no}</p>
+                <p><strong>Building:</strong> ${tenant.building_name}</p>
+                <p><strong>Contact:</strong> ${tenant.contact_no}</p>
+                <p><strong>Rent Amount:</strong> Rs. ${tenant.rent_amount}</p>
+                <p><strong>Due Date:</strong> ${tenant.rent_due_day}th of every month</p>
+            `;
+        }
+        
+        function displayPaymentSummary(payment_history) {
+            document.getElementById('paymentSummary').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Payment Status:</strong> ${payment_history.payment_status}</p>
+                        <p><strong>Last Payment:</strong> ${payment_history.last_payment_date}</p>
+                        <p><strong>Payment Trend:</strong> ${payment_history.payment_trend}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Total Dues:</strong> Rs. ${payment_history.total_dues}</p>
+                        <p><strong>Bill Dues:</strong> Rs. ${payment_history.total_bill_dues}</p>
+                        <p><strong>Last Bill Status:</strong> ${payment_history.last_bill_status}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displayRecentBills(bills) {
+            const billsList = bills.map(bill => `
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Bill for ${bill.month}/${bill.year}</h6>
+                            <p class="mb-1">
+                                Rent: Rs. ${bill.rent_amount}<br>
+                                Electricity: Rs. ${bill.electricity_amount}
+                            </p>
+                            <small class="text-muted">Due: ${new Date(bill.due_date).toLocaleDateString()}</small>
+                        </div>
+                        <span class="badge bg-${bill.status === 'paid' ? 'success' : 'warning'}">
+                            ${bill.status}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('recentBills').innerHTML = `
+                <div class="list-group">
+                    ${billsList}
+                </div>
+            `;
+        }
+        
+        function displayNotifications(notifications) {
+            const notificationsList = notifications.map(notification => `
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${getNotificationTitle(notification.type)}</h6>
+                            <p class="mb-1">${notification.message}</p>
+                            <small class="text-muted">${new Date(notification.date).toLocaleString()}</small>
+                        </div>
+                        <span class="badge bg-${getNotificationColor(notification.type)}">
+                            ${notification.type}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('recentNotifications').innerHTML = `
+                <div class="list-group">
+                    ${notificationsList}
+                </div>
+            `;
+        }
+        
+        function getNotificationColor(type) {
+            switch (type) {
+                case 'bill_overdue':
+                case 'rent_overdue':
+                    return 'danger';
+                case 'bill_due_soon':
+                case 'rent_reminder':
+                    return 'warning';
+                case 'rent_due':
+                    return 'primary';
+                default:
+                    return 'secondary';
+            }
+        }
+        
+        function getNotificationTitle(type) {
+            switch (type) {
+                case 'bill_overdue':
+                    return 'Bill Overdue';
+                case 'bill_due_soon':
+                    return 'Bill Due Soon';
+                case 'rent_overdue':
+                    return 'Rent Overdue';
+                case 'rent_due':
+                    return 'Rent Due Today';
+                case 'rent_reminder':
+                    return 'Rent Reminder';
+                default:
+                    return 'Notification';
+            }
+        }
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await logout();
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            } catch (error) {
+                showToast('Logout failed', 'error');
+                console.error('Error:', error);
+            }
+        });
+        
+        function showToast(message, type = 'success') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+    </script>
+</body>
+</html> 

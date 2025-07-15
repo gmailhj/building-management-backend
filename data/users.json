@@ -1,0 +1,15 @@
+{
+    "users": [
+        {
+            "username": "admin",
+            "password": "admin123",
+            "role": "owner"
+        },
+        {
+            "username": "tenant1",
+            "password": "tenant123",
+            "role": "tenant",
+            "tenant_id": 1
+        }
+    ]
+} 

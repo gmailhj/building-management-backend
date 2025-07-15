@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Building Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Settings</h1>
+            <a href="index.html" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" id="settingsTabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#smsTab">SMS Settings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#notificationsTab">Notification History</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#templatesTab">Message Templates</a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- SMS Settings Tab -->
+            <div class="tab-pane fade show active" id="smsTab">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">SMS Configuration</h5>
+                        <form id="smsConfigForm">
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="smsEnabled">
+                                    <label class="form-check-label" for="smsEnabled">Enable SMS Notifications</label>
+                                </div>
+                            </div>
+                            <div id="smsSettings" class="d-none">
+                                <div class="mb-3">
+                                    <label class="form-label">Provider</label>
+                                    <select class="form-control" id="smsProvider">
+                                        <option value="twilio">Twilio</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Account SID</label>
+                                    <input type="text" class="form-control" id="accountSid" placeholder="Enter Twilio Account SID">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Auth Token</label>
+                                    <input type="password" class="form-control" id="authToken" placeholder="Enter Twilio Auth Token">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">From Number</label>
+                                    <input type="text" class="form-control" id="fromNumber" placeholder="Enter Twilio Phone Number">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Test SMS</h5>
+                        <form id="testSmsForm">
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="testPhone" placeholder="Enter phone number">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-control" id="testMessage" rows="3" placeholder="Enter test message"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Test SMS</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification History Tab -->
+            <div class="tab-pane fade" id="notificationsTab">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title mb-0">Notification History</h5>
+                            <div class="d-flex gap-2">
+                                <button id="sendRemindersBtn" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-bell"></i> Send Reminders
+                                </button>
+                                <select class="form-select form-select-sm" id="notificationFilter">
+                                    <option value="all">All Types</option>
+                                    <option value="rent">Rent Reminders</option>
+                                    <option value="bill">Bill Reminders</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="notificationHistory" class="list-group">
+                            <!-- Notifications will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Templates Tab -->
+            <div class="tab-pane fade" id="templatesTab">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Available Variables</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Basic Information</h6>
+                                <ul class="list-unstyled">
+                                    <li><code>{tenant_name}</code> - Name of the tenant</li>
+                                    <li><code>{flat_no}</code> - Flat number</li>
+                                    <li><code>{building_name}</code> - Name of the building</li>
+                                    <li><code>{amount}</code> - Rent/bill amount</li>
+                                    <li><code>{due_date}</code> - Due date</li>
+                                    <li><code>{days_until_due}</code> - Days until/since due date</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Payment Information</h6>
+                                <ul class="list-unstyled">
+                                    <li><code>{payment_status}</code> - Overall payment status with trend</li>
+                                    <li><code>{last_payment_status}</code> - Status of last payment</li>
+                                    <li><code>{last_payment_date}</code> - Date of last payment</li>
+                                    <li><code>{total_dues}</code> - Total pending amount</li>
+                                    <li><code>{total_bill_dues}</code> - Total pending bill amount</li>
+                                    <li><code>{last_bill_status}</code> - Status of latest bill</li>
+                                    <li><code>{electricity_amount}</code> - Current electricity charges</li>
+                                    <li><code>{payment_trend}</code> - Payment trend (Excellent/Good/Fair/Poor)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Customize Message Templates</h5>
+                        <form id="templateForm">
+                            <div class="mb-4">
+                                <label class="form-label">Rent Due Today</label>
+                                <textarea class="form-control" id="rentDueTemplate" rows="3" placeholder="Enter message template"></textarea>
+                                <small class="text-muted">Sent on the due date</small>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Rent Reminder</label>
+                                <textarea class="form-control" id="rentReminderTemplate" rows="3" placeholder="Enter message template"></textarea>
+                                <small class="text-muted">Sent before the due date</small>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Rent Overdue</label>
+                                <textarea class="form-control" id="rentOverdueTemplate" rows="3" placeholder="Enter message template"></textarea>
+                                <small class="text-muted">Sent after the due date</small>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Bill Due Soon</label>
+                                <textarea class="form-control" id="billDueTemplate" rows="3" placeholder="Enter message template"></textarea>
+                                <small class="text-muted">Sent before bill due date</small>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Bill Overdue</label>
+                                <textarea class="form-control" id="billOverdueTemplate" rows="3" placeholder="Enter message template"></textarea>
+                                <small class="text-muted">Sent after bill due date</small>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button type="submit" class="btn btn-primary">Save Templates</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="resetTemplates()">Reset to Default</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container for Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <!-- Load scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html> 

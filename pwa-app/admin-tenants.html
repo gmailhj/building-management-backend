@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Tenant Management - Building Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/pwa-app/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Building Management (Admin)</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="tenants.html" class="nav-link">Tenants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="admin-tenants.html" class="nav-link active">Admin Tenants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Tenant Management</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Tenant Name</th>
+                        <th>Rent Due Date</th>
+                        <th>Rent Amount</th>
+                        <th>Current Meter</th>
+                        <th>Previous Meter</th>
+                        <th>Bill Amount</th>
+                        <th>Bill Date</th>
+                        <th>Contact No.</th>
+                        <th>Aadhar No.</th>
+                        <th>Agreement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tenantsTableBody">
+                    <!-- Tenant data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTenants();
+        });
+
+        async function loadTenants() {
+            try {
+                const tenants = await getTenants();
+                const bills = await getBills();
+                
+                const tenantsTableBody = document.getElementById('tenantsTableBody');
+                tenantsTableBody.innerHTML = '';
+
+                tenants.forEach(tenant => {
+                    const latestBill = bills
+                        .filter(b => b.tenant_id === tenant.id)
+                        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+                    const row = `
+                        <tr>
+                            <td>${tenant.name}</td>
+                            <td>${tenant.rent_due_day}</td>
+                            <td>Rs. ${tenant.rent_amount}</td>
+                            <td>${tenant.current_meter_reading || 0}</td>
+                            <td>${tenant.previous_meter_reading || 0}</td>
+                            <td>${latestBill ? `Rs. ${latestBill.electricity_amount}` : 'N/A'}</td>
+                            <td>${latestBill ? new Date(latestBill.created_at).toLocaleDateString() : 'N/A'}</td>
+                            <td>${tenant.contact_no}</td>
+                            <td>${tenant.aadhar_no}</td>
+                            <td>
+                                ${tenant.agreement_file ? `<a href="${tenant.agreement_file}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>` : '<span class="text-muted">No file</span>'}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="viewTenantDetails(${tenant.id})">View</button>
+                                <button class="btn btn-sm btn-warning" onclick="editTenant(${tenant.id})">Edit</button>
+                            </td>
+                        </tr>
+                    `;
+                    tenantsTableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Error loading tenants:', error);
+            }
+        }
+
+        function viewTenantDetails(tenantId) {
+            window.location.href = `tenant-details.html?id=${tenantId}`;
+        }
+
+        function editTenant(tenantId) {
+            // Redirect to edit tenant page or open modal for editing
+            window.location.href = `tenant-details.html?id=${tenantId}&edit=true`;
+        }
+    </script>
+</body>
+</html>
+

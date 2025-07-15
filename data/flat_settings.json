@@ -1,0 +1,30 @@
+{
+  "FLAT-101": {
+    "notifications": {
+      "rent": true,
+      "bills": true,
+      "maintenance": true,
+      "announcements": true
+    },
+    "reminder_days": 5,
+    "reminder_method": "notification"
+  },
+  "FLAT-106": {
+    "notifications": {
+      "rent": true,
+      "bills": true,
+      "maintenance": true,
+      "general": true
+    },
+    "notification_method": "email",
+    "payment": {
+      "auto_pay": false,
+      "method": "bank_transfer",
+      "day": "5"
+    },
+    "privacy": {
+      "show_contact": false,
+      "show_email": false
+    }
+  }
+}

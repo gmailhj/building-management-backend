@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/pwa-app/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Building Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="tenants.html">Tenants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="settings.html">Settings</a>
+                    </li>
+                </ul>
+                <button class="btn btn-outline-light" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 id="buildingName">Building Details</h2>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTenantModal">
+                    <i class="fas fa-plus"></i> Add Tenant
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Building Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Address:</strong> <span id="buildingAddress"></span></p>
+                        <p><strong>Status:</strong> <span id="buildingStatus"></span></p>
+                        <p><strong>Created:</strong> <span id="buildingCreated"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Flats</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="flatsList">
+                            <!-- Flats will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Tenant Modal -->
+    <div class="modal fade" id="addTenantModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Tenant</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTenantForm">
+                        <div class="mb-3">
+                            <label for="tenantName" class="form-label">Tenant Name</label>
+                            <input type="text" class="form-control" id="tenantName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenantPhone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="tenantPhone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenantEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="tenantEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="flatNumber" class="form-label">Flat Number</label>
+                            <select class="form-control" id="flatNumber" required>
+                                <!-- Flats will be loaded here -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rentAmount" class="form-label">Rent Amount</label>
+                            <input type="number" class="form-control" id="rentAmount" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addTenant()">Add Tenant</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container for Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="api.js"></script>
+    <script>
+        let currentBuildingId = null;
+
+        // Check if user is logged in and get building ID from URL
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'owner') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            currentBuildingId = urlParams.get('id');
+            
+            if (!currentBuildingId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadBuildingDetails();
+        });
+
+        async function loadBuildingDetails() {
+            try {
+                const building = await getBuildingDetails(currentBuildingId);
+                
+                // Update building information
+                document.getElementById('buildingName').textContent = building.name;
+                document.getElementById('buildingAddress').textContent = building.address;
+                document.getElementById('buildingStatus').textContent = building.status;
+                document.getElementById('buildingCreated').textContent = new Date(building.created_at).toLocaleDateString();
+                
+                // Update flats list
+                const flatsList = document.getElementById('flatsList');
+                const flatSelect = document.getElementById('flatNumber');
+                
+                flatsList.innerHTML = '';
+                flatSelect.innerHTML = '<option value="">Select a flat</option>';
+                
+                Object.entries(building.flats).forEach(([flatNumber, flatData]) => {
+                    // Add to flats list
+                    flatsList.innerHTML += `
+                        <div class="mb-3">
+                            <h6>${flatNumber}</h6>
+                            <p class="mb-1">Type: ${flatData.type}</p>
+                            <p class="mb-1">Rent: ₹${flatData.rent_amount}</p>
+                            <p class="mb-1">Status: <span class="badge bg-${flatData.status === 'vacant' ? 'success' : 'warning'}">${flatData.status}</span></p>
+                        </div>
+                    `;
+                    
+                    // Add to select dropdown if vacant
+                    if (flatData.status === 'vacant') {
+                        flatSelect.innerHTML += `<option value="${flatNumber}">${flatNumber} - ${flatData.type}</option>`;
+                    }
+                });
+            } catch (error) {
+                showToast('Failed to load building details', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        async function addTenant() {
+            try {
+                const name = document.getElementById('tenantName').value;
+                const phone = document.getElementById('tenantPhone').value;
+                const email = document.getElementById('tenantEmail').value;
+                const flatNumber = document.getElementById('flatNumber').value;
+                const rentAmount = document.getElementById('rentAmount').value;
+                
+                if (!name || !phone || !email || !flatNumber || !rentAmount) {
+                    showToast('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                await apiCall('/api/tenants', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        name,
+                        phone,
+                        email,
+                        building_id: currentBuildingId,
+                        flat_number: flatNumber,
+                        rent_amount: parseInt(rentAmount)
+                    })
+                });
+                
+                // Close modal and reset form
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addTenantModal'));
+                modal.hide();
+                document.getElementById('addTenantForm').reset();
+                
+                // Reload building details
+                await loadBuildingDetails();
+                showToast('Tenant added successfully', 'success');
+            } catch (error) {
+                showToast('Failed to add tenant', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await logout();
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            } catch (error) {
+                showToast('Failed to logout', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+    </script>
+</body>
+</html> 
