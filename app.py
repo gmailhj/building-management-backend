@@ -20,7 +20,14 @@ app.config['SESSION_COOKIE_PATH'] = '/'  # Ensure cookie is available for all pa
 # CORS configuration
 CORS(app, 
      resources={r"/*": {
-         "origins": ["http://127.0.0.1:5000", "http://localhost:5000", "http://localhost:3000"],
+         "origins": [
+             "http://127.0.0.1:5000", 
+             "http://localhost:5000", 
+             "http://localhost:3000",
+             "https://web-production-06288.up.railway.app",
+             "https://*.vercel.app",
+             "https://*.railway.app"
+         ],
          "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
          "allow_headers": ["Content-Type", "Authorization"],
          "supports_credentials": True,
